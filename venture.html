@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+
+<body>
+
+<a-scene>
+
+  <!-- Camera -->
+  <a-entity camera wasd-controls look-controls position="0 1.6 6"></a-entity>
+
+  <!-- Ground -->
+  <a-plane rotation="-90 0 0" width="30" height="30" color="#e0e0e0"></a-plane>
+
+  <!-- Revenue Bar -->
+  <a-box id="bar" position="0 1 -3" width="1" depth="1" height="2" color="green"></a-box>
+
+  <!-- Company Image Panel -->
+  <a-plane 
+    position="3 2 -4" 
+    width="3" height="2" 
+    src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
+  </a-plane>
+
+  <!-- Stats -->
+  <a-text id="stats" position="-3 3 -3" color="black" value="Loading..."></a-text>
+
+  <!-- Level -->
+  <a-text id="levelText" position="-1 4 -3" color="purple" value="Level 1"></a-text>
+
+  <!-- Reward -->
+  <a-text id="rewardText" position="-1 3.5 -3" color="orange" value=""></a-text>
+
+  <!-- Buttons -->
+  <a-box position="-4 1 -3" color="blue" onclick="increasePrice()"></a-box>
+  <a-text position="-4 2 -3" value="Increase"></a-text>
+
+  <a-box position="-4 0 -3" color="blue" onclick="decreasePrice()"></a-box>
+  <a-text position="-4 1 -3" value="Decrease"></a-text>
+
+  <a-box position="4 1 -3" color="orange" onclick="runDay()"></a-box>
+  <a-text position="4 2 -3" value="Run Day"></a-text>
+
+  <a-box position="4 0 -3" color="green" onclick="investStock()"></a-box>
+  <a-text position="4 1 -3" value="Invest"></a-text>
+
+</a-scene>
+
+<script>
+let money = 1000;
+let price = 10;
+let customers = 50;
+let shares = 100;
+let level = 1;
+let reward = "";
+
+function updateUI() {
+  let companyValue = money * 5;
+  let stockPrice = companyValue / shares;
+
+  document.querySelector("#stats").setAttribute("value",
+    "Money: ₹" + money +
+    "\nPrice: " + price +
+    "\nCustomers: " + customers +
+    "\nStock: " + stockPrice.toFixed(2)
+  );
+
+  document.querySelector("#levelText")
+    .setAttribute("value", "Level " + level);
+
+  document.querySelector("#rewardText")
+    .setAttribute("value", reward);
+
+  // Bar growth
+  let height = Math.max(1, money / 500);
+  document.querySelector("#bar").setAttribute("height", height);
+
+  // Color feedback
+  if (money > 1000) {
+    document.querySelector("#bar").setAttribute("color", "green");
+  } else {
+    document.querySelector("#bar").setAttribute("color", "red");
+  }
+
+  // Level progression
+  if (money > 3000 && level === 1) {
+    level = 2;
+    reward = "Unlocked: Marketing Boost 🚀";
+  }
+
+  if (money > 7000 && level === 2) {
+    level = 3;
+    reward = "Unlocked: IPO Stage 📈";
+  }
+}
+
+function increasePrice() {
+  price += 2;
+  customers = Math.max(5, 120 - price);
+  updateUI();
+}
+
+function decreasePrice() {
+  price = Math.max(1, price - 2);
+  customers = Math.max(5, 120 - price);
+  updateUI();
+}
+
+function runDay() {
+  let revenue = price * customers;
+  let cost = 200;
+  money += revenue - cost;
+
+  // Random event
+  if (Math.random() < 0.3) {
+    money += 200;
+    reward = "Bonus Demand Spike!";
+  }
+
+  updateUI();
+}
+
+function investStock() {
+  let companyValue = money * 5;
+  let stockPrice = companyValue / shares;
+
+  let gain = Math.random() * 200 - 100;
+  money += gain;
+
+  reward = gain > 0 ? "Stock Profit 📈" : "Stock Loss 📉";
+  updateUI();
+}
+
+updateUI();
+</script>
+
+</body>
+</html>

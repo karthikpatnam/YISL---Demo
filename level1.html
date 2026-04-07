@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+</head>
+
+<body>
+
+<a-scene>
+
+  <!-- Camera -->
+  <a-entity camera wasd-controls look-controls position="0 1.6 6"></a-entity>
+
+  <!-- Ground -->
+  <a-plane rotation="-90 0 0" width="30" height="30" color="#e0e0e0"></a-plane>
+
+  <!-- Revenue Bar -->
+  <a-box id="bar" position="0 1 -3" width="1" depth="1" height="2" color="green"></a-box>
+
+  <!-- Stats -->
+  <a-text id="stats" position="-4 3 -3" color="black"></a-text>
+
+  <!-- Event -->
+  <a-text id="event" position="-1 4 -3" color="orange"></a-text>
+
+  <!-- BUSINESS SELECTION -->
+  <a-text position="-1 2.5 -3" value="Choose Business"></a-text>
+
+  <a-plane position="-3 1 -3" width="2" height="1.5"
+    src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png"
+    onclick="chooseBusiness('tech')">
+  </a-plane>
+  <a-text position="-3 0 -3" value="Tech"></a-text>
+
+  <a-plane position="0 1 -3" width="2" height="1.5"
+    src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png"
+    onclick="chooseBusiness('food')">
+  </a-plane>
+  <a-text position="0 0 -3" value="Food"></a-text>
+
+  <a-plane position="3 1 -3" width="2" height="1.5"
+    src="https://cdn-icons-png.flaticon.com/512/892/892458.png"
+    onclick="chooseBusiness('clothing')">
+  </a-plane>
+  <a-text position="3 0 -3" value="Clothing"></a-text>
+
+  <!-- DECISIONS -->
+  <a-box position="-4 -1 -3" color="blue" onclick="increasePrice()"></a-box>
+  <a-text position="-4 -0.3 -3" value="Price +"></a-text>
+
+  <a-box position="-2 -1 -3" color="blue" onclick="decreasePrice()"></a-box>
+  <a-text position="-2 -0.3 -3" value="Price -"></a-text>
+
+  <a-box position="2 -1 -3" color="purple" onclick="marketing()"></a-box>
+  <a-text position="2 -0.3 -3" value="Marketing"></a-text>
+
+  <a-box position="4 -1 -3" color="green" onclick="quality()"></a-box>
+  <a-text position="4 -0.3 -3" value="Quality"></a-text>
+
+  <!-- RUN DAY -->
+  <a-box position="0 -2 -3" color="orange" onclick="runDay()"></a-box>
+  <a-text position="0 -2.7 -3" value="Run Day"></a-text>
+
+</a-scene>
+
+<script>
+let money = 1000;
+let price = 10;
+let customers = 50;
+let day = 1;
+let business = "";
+let qualityLevel = 1;
+
+function chooseBusiness(type) {
+  business = type;
+
+  if (type === "tech") customers = 40;
+  if (type === "food") customers = 60;
+  if (type === "clothing") customers = 50;
+
+  showEvent("Started " + type + " business!");
+  updateUI();
+}
+
+function updateUI() {
+  document.querySelector("#stats").setAttribute("value",
+    "₹" + money +
+    "\nPrice: " + price +
+    "\nCustomers: " + customers +
+    "\nDay: " + day
+  );
+
+  let height = Math.max(1, money / 500);
+  document.querySelector("#bar").setAttribute("height", height);
+
+  if (money > 1000) {
+    document.querySelector("#bar").setAttribute("color", "green");
+  } else {
+    document.querySelector("#bar").setAttribute("color", "red");
+  }
+}
+
+function showEvent(msg) {
+  document.querySelector("#event").setAttribute("value", msg);
+}
+
+function increasePrice() {
+  price += 2;
+  customers = Math.max(10, 100 - price);
+  updateUI();
+}
+
+function decreasePrice() {
+  price = Math.max(1, price - 2);
+  customers = Math.max(10, 100 - price);
+  updateUI();
+}
+
+function marketing() {
+  if (money >= 200) {
+    money -= 200;
+    customers += 20;
+    showEvent("Marketing worked 🚀");
+  }
+  updateUI();
+}
+
+function quality() {
+  if (money >= 150) {
+    money -= 150;
+    qualityLevel++;
+    customers += 10;
+    showEvent("Quality improved ⭐");
+  }
+  updateUI();
+}
+
+function runDay() {
+  let revenue = price * customers;
+  let cost = 100 + (qualityLevel * 20);
+
+  money += revenue - cost;
+
+  let rand = Math.random();
+
+  if (rand < 0.3) {
+    money += 200;
+    showEvent("📈 Viral Growth!");
+  } else if (rand < 0.6) {
+    money -= 150;
+    showEvent("⚔️ Competitor!");
+  } else {
+    showEvent("Normal Day");
+  }
+
+  day++;
+
+  if (money >= 3000) {
+    alert("🎉 Level Complete!");
+    location.reload();
+  }
+
+  if (money <= 0) {
+    alert("💀 Bankruptcy!");
+    location.reload();
+  }
+
+  updateUI();
+}
+
+updateUI();
+</script>
+
+</body>
+</html>

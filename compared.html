@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>VentureScape VR - Level 1</title>
+  <script src="https://aframe.io/releases/1.7.1/aframe.min.js"></script>
+</head>
+
+<body>
+  <a-scene>
+
+    <!-- Environment -->
+    <a-sky color="#CCE7FF"></a-sky>
+    <a-plane position="0 -1 -4" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+
+    <!-- Title -->
+    <a-text value="VentureScape - Startup Simulator"
+      position="0 4 -6"
+      align="center"
+      color="black"
+      width="8">
+    </a-text>
+
+    <!-- Revenue Bar -->
+    <a-box id="bar" position="0 0 -4" width="1" height="2" depth="1" color="green"></a-box>
+
+    <!-- Stats -->
+    <a-text id="stats"
+      value="Money: 1000"
+      position="-3 3 -4"
+      color="black"
+      width="6">
+    </a-text>
+
+    <!-- Business Images -->
+    <a-image src="https://cdn-icons-png.flaticon.com/512/2721/2721297.png"
+      position="-3 1 -4" width="2" height="2"
+      onclick="chooseBusiness('tech')">
+    </a-image>
+    <a-text value="Tech" position="-3 0 -4"></a-text>
+
+    <a-image src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png"
+      position="0 1 -4" width="2" height="2"
+      onclick="chooseBusiness('food')">
+    </a-image>
+    <a-text value="Food" position="0 0 -4"></a-text>
+
+    <a-image src="https://cdn-icons-png.flaticon.com/512/892/892458.png"
+      position="3 1 -4" width="2" height="2"
+      onclick="chooseBusiness('clothing')">
+    </a-image>
+    <a-text value="Clothing" position="3 0 -4"></a-text>
+
+    <!-- Decision Buttons -->
+    <a-box position="-4 -0.5 -4" color="blue" onclick="increasePrice()"></a-box>
+    <a-text value="Price +" position="-4 -1.2 -4"></a-text>
+
+    <a-box position="-2 -0.5 -4" color="blue" onclick="decreasePrice()"></a-box>
+    <a-text value="Price -" position="-2 -1.2 -4"></a-text>
+
+    <a-box position="2 -0.5 -4" color="purple" onclick="marketing()"></a-box>
+    <a-text value="Marketing" position="2 -1.2 -4"></a-text>
+
+    <a-box position="4 -0.5 -4" color="green" onclick="quality()"></a-box>
+    <a-text value="Quality" position="4 -1.2 -4"></a-text>
+
+    <!-- Run Day -->
+    <a-box position="0 -2 -4" color="orange" onclick="runDay()"></a-box>
+    <a-text value="Run Day" position="0 -2.8 -4"></a-text>
+
+  </a-scene>
+
+  <script>
+    let money = 1000;
+    let price = 10;
+    let customers = 50;
+    let business = "";
+
+    function chooseBusiness(type) {
+      business = type;
+      if (type === "tech") customers = 40;
+      if (type === "food") customers = 60;
+      if (type === "clothing") customers = 50;
+      updateUI();
+    }
+
+    function updateUI() {
+      document.querySelector("#stats").setAttribute("value",
+        "₹" + money +
+        "\nCustomers: " + customers
+      );
+
+      let height = Math.max(1, money / 500);
+      document.querySelector("#bar").setAttribute("height", height);
+    }
+
+    function increasePrice() {
+      price += 2;
+      customers = Math.max(10, 100 - price);
+      updateUI();
+    }
+
+    function decreasePrice() {
+      price = Math.max(1, price - 2);
+      customers = Math.max(10, 100 - price);
+      updateUI();
+    }
+
+    function marketing() {
+      if (money >= 200) {
+        money -= 200;
+        customers += 20;
+      }
+      updateUI();
+    }
+
+    function quality() {
+      if (money >= 150) {
+        money -= 150;
+        customers += 10;
+      }
+      updateUI();
+    }
+
+    function runDay() {
+      let revenue = price * customers;
+      money += revenue - 100;
+
+      if (money >= 3000) {
+        alert("🎉 Level Complete!");
+        location.reload();
+      }
+
+      if (money <= 0) {
+        alert("💀 Bankruptcy!");
+        location.reload();
+      }
+
+      updateUI();
+    }
+
+    updateUI();
+  </script>
+
+</body>
+
+</html>

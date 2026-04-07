@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>VentureScape - Level 1</title>
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      background: #f4f4f4;
+    }
+    .box {
+      margin: 20px;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚀 VentureScape - Level 1</h1>
+
+<div class="box">
+  <h3>Choose Business</h3>
+  <button onclick="chooseBusiness('tech')">Tech Startup</button>
+  <button onclick="chooseBusiness('food')">Food Stall</button>
+  <button onclick="chooseBusiness('clothing')">Clothing Brand</button>
+</div>
+
+<div class="box">
+  <h3>Status</h3>
+  <p id="status"></p>
+</div>
+
+<div class="box">
+  <h3>Decisions</h3>
+  <button onclick="changePrice(2)">Increase Price</button>
+  <button onclick="changePrice(-2)">Decrease Price</button>
+  <br><br>
+  <button onclick="marketing()">Marketing (₹200)</button>
+  <button onclick="quality()">Improve Quality (₹150)</button>
+</div>
+
+<div class="box">
+  <button onclick="runDay()">▶ Run Day</button>
+</div>
+
+<div class="box">
+  <h3 id="event"></h3>
+</div>
+
+<script>
+let money = 1000;
+let price = 10;
+let customers = 50;
+let day = 1;
+let business = "";
+let qualityLevel = 1;
+
+function chooseBusiness(type) {
+  business = type;
+
+  if (type === "tech") customers = 40;
+  if (type === "food") customers = 60;
+  if (type === "clothing") customers = 50;
+
+  updateUI();
+}
+
+function updateUI() {
+  document.getElementById("status").innerText =
+    "Business: " + business +
+    " | Money: ₹" + money +
+    " | Price: " + price +
+    " | Customers: " + customers +
+    " | Day: " + day;
+}
+
+function changePrice(val) {
+  price += val;
+  if (price < 1) price = 1;
+
+  customers = Math.max(10, 100 - price);
+  updateUI();
+}
+
+function marketing() {
+  if (money >= 200) {
+    money -= 200;
+    customers += 20;
+  }
+  updateUI();
+}
+
+function quality() {
+  if (money >= 150) {
+    money -= 150;
+    qualityLevel++;
+    customers += 10;
+  }
+  updateUI();
+}
+
+function runDay() {
+  let revenue = price * customers;
+  let cost = 100 + (qualityLevel * 20);
+
+  money += revenue - cost;
+
+  // Random Events
+  let rand = Math.random();
+
+  if (rand < 0.3) {
+    money += 200;
+    document.getElementById("event").innerText = "📈 Viral Growth!";
+  } else if (rand < 0.6) {
+    money -= 150;
+    document.getElementById("event").innerText = "⚔️ Competitor Appeared!";
+  } else {
+    document.getElementById("event").innerText = "Normal Day";
+  }
+
+  day++;
+
+  // Win condition
+  if (money >= 3000) {
+    alert("🎉 Success! Moving to Level 2");
+    location.reload();
+  }
+
+  // Lose condition
+  if (money <= 0) {
+    alert("💀 You went bankrupt!");
+    location.reload();
+  }
+
+  updateUI();
+}
+
+updateUI();
+</script>
+
+</body>
+</html>
